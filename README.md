@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎤 Karaoke Queuing App
 
-## Getting Started
+A modern Karaoke application built with **Next.js 14**, **Tailwind CSS**, and **YouTube Search** that allows audience members to:
 
-First, run the development server:
+- Scan a **QR code**
+- **Search** for their favorite song on YouTube
+- **Queue a song** to be played
+- See a **live display of queued songs**
+- Get notified when they’re "**Up Next!**"
+
+---
+
+## 🚀 Features
+
+- ✅ YouTube song search interface  
+- ✅ Queue songs by submitting YouTube links  
+- ✅ Display list of participants with selected songs  
+- ✅ Admin interface to play YouTube videos in order  
+- ✅ Toast notifications (e.g., "You're up next!")  
+- ✅ Tailwind CSS for fast responsive UI  
+- ✅ Built with App Router + `use client` components  
+
+---
+
+## 🖼️ Screenshots
+
+| Search Page | Queue Display | Admin Page |
+|-------------|----------------|-------------|
+| 🔍 Song search bar + results | 🧑‍🎤 Queued users list | 🎧 Play & manage queue |
+
+---
+
+## 📦 Tech Stack
+
+- **Framework**: [Next.js 14 (App Router)](https://nextjs.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **YouTube Search**: YouTube Data API v3 / mock data
+- **State**: useState + `use client` components
+- **Future**: Firebase Firestore / Supabase for real-time updates
+
+---
+
+## 🛠️ Installation
 
 ```bash
+# 1. Clone the repo
+git clone https://github.com/your-username/karaoke-app.git
+
+# 2. Navigate to project
+cd karaoke-app
+
+# 3. Install dependencies
+npm install
+
+# 4. Run the dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+License
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+MIT License © 2025 — Built with ❤️ for the Chemichemi Karaoke Nights.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+⸻
 
-## Learn More
+👨‍💻 Developer
 
-To learn more about Next.js, take a look at the following resources:
+Ian Frank Odundo
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
