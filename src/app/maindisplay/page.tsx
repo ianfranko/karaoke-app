@@ -1,26 +1,8 @@
 // app/maindisplay/page.tsx
 'use client';
-import { useEffect, useState } from 'react';
-import { db } from '@/lib/firebase';
-import { ref, onValue } from 'firebase/database';
-import { removeQueueItem } from '@/lib/firebase';
 import { useQueue } from './useQueue';
 import NowPlayingCard from './NowPlayingCard';
 import QueueList from './QueueList';
-
-interface QueueItem {
-  key: string;
-  name: string;
-  youtubeLink: string;
-  status: string;
-  timestamp?: number;
-}
-
-function getYouTubeId(url: string): string | null {
-  const regExp = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([\w-]{11})/;
-  const match = url.match(regExp);
-  return match ? match[1] : null;
-}
 
 export default function MainDisplayPage() {
   const { queue, removeFirst, isAdmin } = useQueue();
@@ -45,7 +27,7 @@ export default function MainDisplayPage() {
       <div className="flex-1 w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-6 items-stretch min-h-0 px-1 sm:px-2 md:px-0">
         <section className="flex flex-col items-center w-full md:col-span-2 min-h-0">
           <div className="flex-1 w-full min-h-0 overflow-auto flex flex-col items-center justify-center p-1 sm:p-0">
-            <NowPlayingCard nowPlaying={nowPlaying} isAdmin={isAdmin} onNext={removeFirst} />
+            <NowPlayingCard nowPlaying={nowPlaying} onNext={removeFirst} />
           </div>
         </section>
         <aside className="flex flex-col items-center w-full md:col-span-1 min-h-0 mt-2 md:mt-0">

@@ -38,7 +38,7 @@ export default function AdminPage() {
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [current]);
 
   const handleNext = async () => {
     if (current) {

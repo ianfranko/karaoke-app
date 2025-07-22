@@ -5,7 +5,7 @@ import QueueItem from '../components/QueueItem';
 import { listenToQueue } from '../../lib/firebase';
 import confetti from 'canvas-confetti';
 import useSound from 'use-sound';
-import { useRef, useCallback } from 'react';
+import { useRef } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { updateQueueOrder } from '../../lib/firebase';
 

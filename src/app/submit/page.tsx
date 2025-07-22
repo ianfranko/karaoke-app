@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { FaSpinner } from 'react-icons/fa';
 import Link from 'next/link';
 import confetti from 'canvas-confetti';
+import Image from 'next/image';
 
 // Define a type for YouTube search results
 interface YouTubeSearchResult {
@@ -97,7 +98,7 @@ export default function SubmitPage() {
       const data = await res.json();
       if (data.error) throw new Error(data.error.message);
       setSearchResults(data.items || []);
-    } catch (err) {
+    } catch {
       setSearchError('Failed to fetch YouTube results.');
     } finally {
       setSearchLoading(false);
@@ -149,13 +150,15 @@ export default function SubmitPage() {
                   className="flex items-center gap-3 bg-gray-800 rounded p-2 cursor-pointer hover:bg-pink-900 transition"
                   onClick={() => {
                     setLink(`https://www.youtube.com/watch?v=${item.id.videoId}`);
-                    toast.success(`Song link for \"${item.snippet.title}\" auto-filled!`);
+                    toast.success(`Song link for &quot;${item.snippet.title}&quot; auto-filled!`);
                   }}
                 >
-                  <img
+                  <Image
                     src={item.snippet.thumbnails.default.url}
                     alt={item.snippet.title}
-                    className="w-16 h-10 rounded object-cover"
+                    width={64}
+                    height={40}
+                    className="rounded object-cover"
                   />
                   <div className="flex flex-col">
                     <span className="font-semibold text-sm text-pink-300">{item.snippet.title}</span>

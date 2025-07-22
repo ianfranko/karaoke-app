@@ -16,11 +16,10 @@ function getYouTubeId(url: string): string | null {
 
 interface NowPlayingCardProps {
   nowPlaying?: QueueItem;
-  isAdmin: boolean;
   onNext: () => void;
 }
 
-const NowPlayingCard: React.FC<NowPlayingCardProps> = ({ nowPlaying, isAdmin, onNext }) => {
+const NowPlayingCard: React.FC<NowPlayingCardProps> = ({ nowPlaying, onNext }) => {
   const videoId = nowPlaying ? getYouTubeId(nowPlaying.youtubeLink) : null;
   const embedUrl = videoId && typeof window !== 'undefined'
     ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&origin=${encodeURIComponent(window.location.origin)}&enablejsapi=1`
