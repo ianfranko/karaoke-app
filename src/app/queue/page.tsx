@@ -1,84 +1,149 @@
 // app/queue/page.tsx
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import QueueItem from '../components/QueueItem';
+import { listenToQueue } from '../../lib/firebase';
+import confetti from 'canvas-confetti';
+import useSound from 'use-sound';
+import { useRef, useCallback } from 'react';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import { updateQueueOrder } from '../../lib/firebase';
+
+interface QueueItemData {
+  key: string;
+  songTitle: string;
+  artist: string;
+  addedBy: string;
+  youtubeLink?: string;
+  status?: string;
+  timestamp?: number;
+  position?: number; // Added for drag-and-drop
+}
 
 export default function QueuePage() {
-  const [queue] = useState([
-    {
-      name: 'Alice',
-      youtubeLink: 'https://youtu.be/dQw4w9WgXcQ',
-      status: 'waiting',
-      createdAt: new Date('2024-06-01T18:00:00Z'),
-    },
-    {
-      name: 'Bob',
-      youtubeLink: 'https://youtu.be/3JZ_D3ELwOQ',
-      status: 'playing',
-      createdAt: new Date('2024-06-01T18:05:00Z'),
-    },
-    {
-      name: 'Charlie',
-      youtubeLink: 'https://youtu.be/L_jWHffIx5E',
-      status: 'waiting',
-      createdAt: new Date('2024-06-01T18:10:00Z'),
-    },
-  ]);
+  const [queue, setQueue] = useState<QueueItemData[]>([]);
+  const prevQueueLength = useRef(0);
+  const [play] = useSound('https://cdn.pixabay.com/audio/2022/07/26/audio_124bfa4c82.mp3', { volume: 0.3 }); // Free sound
+
+  // Sort by position if present, else by timestamp
+  useEffect(() => {
+    const unsubscribe = listenToQueue((items) => {
+      const typedItems = items.map((item) => ({
+        key: String(item.key),
+        songTitle: String(item.songTitle ?? ''),
+        artist: String(item.artist ?? ''),
+        addedBy: String(item.addedBy ?? ''),
+        youtubeLink: typeof item.youtubeLink === 'string' ? item.youtubeLink : '',
+        status: typeof item.status === 'string' ? item.status : undefined,
+        timestamp: typeof item.timestamp === 'number' ? item.timestamp : undefined,
+        position: typeof item.position === 'number' ? item.position : undefined,
+      })) as QueueItemData[];
+      const sorted = typedItems.sort((a, b) => {
+        if (typeof a.position === 'number' && typeof b.position === 'number') {
+          return Number(a.position) - Number(b.position);
+        }
+        return Number(a.timestamp || 0) - Number(b.timestamp || 0);
+      });
+      setQueue(sorted);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  // Drag and drop handler
+  const onDragEnd = async (result: DropResult) => {
+    if (!result.destination) return;
+    const newQueue = Array.from(queue);
+    const [removed] = newQueue.splice(result.source.index, 1);
+    newQueue.splice(result.destination.index, 0, removed);
+    setQueue(newQueue);
+    await updateQueueOrder(newQueue.map((item, idx) => ({ key: item.key })));
+  };
+
+  useEffect(() => {
+    if (prevQueueLength.current === 0 && queue.length > 0) {
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.7 },
+      });
+      play();
+    }
+    prevQueueLength.current = queue.length;
+  }, [queue.length, play]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white p-4 sm:p-8">
-      <h1 className="text-3xl sm:text-4xl font-extrabold mb-8 text-center tracking-tight drop-shadow-lg">🎤 Live Karaoke Queue</h1>
+    <main className="min-h-screen bg-gradient-to-b from-[#0f2027] via-[#2c5364] to-[#232526] text-white p-4 sm:p-8 relative overflow-hidden">
+      {/* Animated floating music notes */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <span className="absolute left-10 top-10 text-4xl opacity-40 animate-float-slow text-pink-400">🎵</span>
+        <span className="absolute right-20 top-1/3 text-3xl opacity-20 animate-float text-white">🎶</span>
+        <span className="absolute left-1/2 bottom-20 text-5xl opacity-20 animate-float-fast text-pink-300">🎤</span>
+        <span className="absolute right-10 bottom-10 text-4xl opacity-30 animate-float text-white">🎼</span>
+      </div>
+      <h1 className="text-3xl sm:text-4xl font-extrabold mb-8 text-center tracking-tight drop-shadow-lg relative z-10 text-white">🎤 Live Karaoke Queue</h1>
       {queue.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-64">
-          <span className="text-5xl mb-4">😴</span>
-          <p className="text-lg text-gray-300">No one in the queue yet! Be the first to sing!</p>
+        <div className="flex flex-col items-center justify-center h-64 relative z-10">
+          <span className="text-5xl mb-4 animate-bounce">😴</span>
+          <p className="text-lg text-gray-200">No one in the queue yet! Be the first to sing!</p>
         </div>
       ) : (
-        <ul className="space-y-4 max-w-2xl mx-auto">
-          {queue.map((item, index) => {
-            const isPlaying = item.status === 'playing';
-            const position =
-              index === 0 && !isPlaying
-                ? 'Next up'
-                : isPlaying
-                ? 'Now Playing'
-                : `#${index + 1}`;
-            return (
-              <li
-                key={index}
-                className={`flex items-center gap-4 p-4 border rounded-lg shadow transition-all duration-200 ${
-                  isPlaying
-                    ? 'bg-green-700 border-green-400 scale-105 animate-pulse'
-                    : 'bg-gray-900 border-gray-700 hover:bg-gray-800'
-                }`}
-              >
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-2xl font-bold shadow-inner">
-                  {item.name?.[0]?.toUpperCase() || '🎤'}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-xl font-semibold truncate">{item.name}</p>
-                    {isPlaying && (
-                      <span className="ml-2 px-2 py-0.5 text-xs bg-green-300 text-green-900 rounded-full font-bold animate-bounce">Now Playing</span>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="queue-list">
+            {(provided) => (
+              <ul className="space-y-4 max-w-2xl mx-auto relative z-10" ref={provided.innerRef} {...provided.droppableProps}>
+                {queue.map((item, idx) => (
+                  <Draggable key={item.key} draggableId={item.key} index={idx}>
+                    {(provided, snapshot) => (
+                      <li
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className={
+                          (idx === 0 ? 'relative z-10 ' : '') +
+                          (snapshot.isDragging ? 'scale-105 shadow-2xl ring-2 ring-pink-400 ' : '') +
+                          ' animate-slideIn'
+                        }
+                        style={{ ...provided.draggableProps.style }}
+                      >
+                        {idx === 0 && (
+                          <div className="spotlight-effect" />
+                        )}
+                        <div className={
+                          idx === 0
+                            ? 'ring-4 ring-pink-400/60 rounded-lg animate-pulse shadow-lg bg-black/80'
+                            : 'bg-black/70'
+                        }>
+                          <div className="group relative cursor-grab active:cursor-grabbing">
+                            <QueueItem
+                              name={item.addedBy || item.artist || 'Unknown'}
+                              youtubeLink={item.youtubeLink || ''}
+                              status={item.status || (idx === 0 ? 'singing' : 'waiting')}
+                              songTitle={item.songTitle}
+                              artist={item.artist}
+                            />
+                            <span className="absolute left-1/2 -bottom-7 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-black text-white text-xs px-2 py-1 rounded shadow-lg pointer-events-none">Click to expand for details</span>
+                          </div>
+                          {idx === 0 && (
+                            <>
+                              <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-pink-600 text-white text-xs px-3 py-1 rounded-full shadow-lg animate-bounce font-bold">Now Singing!</div>
+                              {/* Animated progress bar */}
+                              <div className="w-full h-2 bg-pink-900 rounded mt-2 overflow-hidden">
+                                <div className="h-full bg-pink-400 animate-progressBar" style={{ width: '100%' }}></div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </li>
                     )}
-                  </div>
-                  <a
-                    href={item.youtubeLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block text-sm text-blue-300 hover:underline truncate max-w-xs"
-                    title={item.youtubeLink}
-                  >
-                    {item.youtubeLink}
-                  </a>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs italic text-gray-400">{item.status}</span>
-                    <span className="text-xs bg-gray-700 px-2 py-0.5 rounded-full ml-2">{position}</span>
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </ul>
+            )}
+          </Droppable>
+        </DragDropContext>
       )}
     </main>
   );

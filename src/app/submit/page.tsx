@@ -1,10 +1,21 @@
 // app/submit/page.tsx
 'use client';
-import { useState, useEffect } from 'react';
-import { db } from '@/lib/firebase';
-import { collection, addDoc, serverTimestamp, query, onSnapshot } from 'firebase/firestore';
+import { useState } from 'react';
+import { addQueueItem } from '../../lib/firebase';
 import toast from 'react-hot-toast';
 import { FaSpinner } from 'react-icons/fa';
+
+// Define a type for YouTube search results
+interface YouTubeSearchResult {
+  id: { videoId: string };
+  snippet: {
+    title: string;
+    channelTitle: string;
+    thumbnails: { default: { url: string } };
+  };
+}
+
+const YOUTUBE_API_KEY = 'AIzaSyBHqRNH4gADf3XQnaCQ92_eSNf2wv1GYCk';
 
 export default function SubmitPage() {
   const [name, setName] = useState('');
@@ -13,6 +24,10 @@ export default function SubmitPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<YouTubeSearchResult[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState('');
 
   const handleSubmit = async () => {
     setError('');
@@ -24,17 +39,19 @@ export default function SubmitPage() {
     }
     setLoading(true);
     try {
-      await addDoc(collection(db, 'karaokeQueue'), {
-        name,
+      await addQueueItem({
+        songTitle: '', // You can add a field for song title if you want to collect it
+        artist: '', // You can add a field for artist if you want to collect it
+        addedBy: name,
         youtubeLink: link,
-        status: 'queued',
-        createdAt: serverTimestamp(),
+        status: 'waiting',
       });
       toast.success('🎉 Song submitted!');
       setQueuedYou(true);
       setLink('');
       setSuccess(true);
     } catch (err) {
+      console.error('Submission error:', err); // Log the actual error
       setError('Failed to submit.');
       toast.error('Failed to submit.');
     } finally {
@@ -42,27 +59,77 @@ export default function SubmitPage() {
     }
   };
 
-  // Optional: Show "You're up!" toast
-  useEffect(() => {
-    if (!queuedYou || !name) return;
-
-    const q = query(collection(db, 'karaokeQueue'));
-    const unsub = onSnapshot(q, snapshot => {
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        if (data.status === 'playing' && data.name.toLowerCase() === name.toLowerCase()) {
-          toast('🎤 You’re up now!', { icon: '🔥' });
-        }
-      });
-    });
-
-    return () => unsub();
-  }, [name, queuedYou]);
+  const handleYouTubeSearch = async () => {
+    setSearchError('');
+    setSearchLoading(true);
+    setSearchResults([]);
+    try {
+      const res = await fetch(
+        `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=6&q=${encodeURIComponent(
+          searchQuery + ' karaoke'
+        )}&key=${YOUTUBE_API_KEY}`
+      );
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message);
+      setSearchResults(data.items || []);
+    } catch (err) {
+      setSearchError('Failed to fetch YouTube results.');
+    } finally {
+      setSearchLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen p-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-white flex flex-col items-center">
       <div className="w-full max-w-md bg-gray-900 rounded-xl shadow-lg p-8 flex flex-col items-center animate-fade-in">
         <h1 className="text-3xl font-extrabold mb-6 text-pink-400 drop-shadow">Submit Your Karaoke Song</h1>
+        {/* YouTube Search Section */}
+        <div className="w-full flex flex-col gap-2 mb-6">
+          <label className="text-left w-full font-semibold" htmlFor="yt-search">Search YouTube Karaoke</label>
+          <div className="flex gap-2">
+            <input
+              id="yt-search"
+              className="w-full p-3 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+              placeholder="Type a song or artist..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              disabled={searchLoading}
+              autoComplete="off"
+            />
+            <button
+              type="button"
+              onClick={handleYouTubeSearch}
+              disabled={searchLoading || !searchQuery}
+              className="bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded font-bold shadow transition disabled:opacity-50"
+            >
+              {searchLoading ? <FaSpinner className="animate-spin" /> : 'Search'}
+            </button>
+          </div>
+          {searchError && <div className="text-red-400 text-sm font-medium animate-shake">{searchError}</div>}
+          {/* Results */}
+          {searchResults.length > 0 && (
+            <div className="mt-2 grid grid-cols-1 gap-3">
+              {searchResults.map((item) => (
+                <div
+                  key={item.id.videoId}
+                  className="flex items-center gap-3 bg-gray-800 rounded p-2 cursor-pointer hover:bg-pink-900 transition"
+                  onClick={() => setLink(`https://www.youtube.com/watch?v=${item.id.videoId}`)}
+                >
+                  <img
+                    src={item.snippet.thumbnails.default.url}
+                    alt={item.snippet.title}
+                    className="w-16 h-10 rounded object-cover"
+                  />
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-sm text-pink-300">{item.snippet.title}</span>
+                    <span className="text-xs text-gray-400">{item.snippet.channelTitle}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        {/* End YouTube Search Section */}
         <form
           className="w-full flex flex-col gap-4"
           onSubmit={e => {
