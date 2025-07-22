@@ -20,7 +20,6 @@ interface KaraokeQueueItem {
 }
 
 export default function AdminPage() {
-  const [queue, setQueue] = useState<KaraokeQueueItem[]>([]);
   const [current, setCurrent] = useState<KaraokeQueueItem | null>(null);
 
   useEffect(() => {
@@ -30,7 +29,6 @@ export default function AdminPage() {
       const items = Object.entries(data)
         .map(([id, item]) => ({ id, ...(item as Omit<KaraokeQueueItem, 'id'>) }))
         .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
-      setQueue(items);
       const next = items.find((item: KaraokeQueueItem) => item.status === 'queued');
       if (next && (!current || current.id !== next.id)) {
         setCurrent(next);

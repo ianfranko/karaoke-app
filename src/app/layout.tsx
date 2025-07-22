@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
-import Navbar from "./components/Navbar";
 import { Toaster } from 'react-hot-toast';
 import ClientNavbarWrapper from './components/ClientNavbarWrapper';
 

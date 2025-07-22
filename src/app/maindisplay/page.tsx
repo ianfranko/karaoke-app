@@ -5,7 +5,7 @@ import NowPlayingCard from './NowPlayingCard';
 import QueueList from './QueueList';
 
 export default function MainDisplayPage() {
-  const { queue, removeFirst, isAdmin } = useQueue();
+  const { queue, removeFirst } = useQueue();
   const nowPlaying = queue[0];
   const upNext = queue.slice(1);
 

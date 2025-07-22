@@ -120,7 +120,7 @@ export default function SubmitPage() {
         <h1 className="text-3xl font-extrabold mb-6 text-pink-400 drop-shadow">Submit Your Name and Song</h1>
         {/* YouTube Search Section */}
         <div className="w-full flex flex-col gap-2 mb-6">
-          <label className="text-left w-full font-semibold" htmlFor="yt-search">YouTube Search (and add "Kraraoke" at the end of the search)</label>
+          <label className="text-left w-full font-semibold" htmlFor="yt-search">YouTube Search (and add &quot;Kraraoke&quot; at the end of the search)</label>
           <div className="flex gap-2">
             <input
               id="yt-search"
@@ -199,7 +199,7 @@ export default function SubmitPage() {
             disabled={loading}
             autoComplete="off"
           />
-          <span className="text-xs text-gray-400 mb-2">Must be a YouTube link (e.g. https://www.youtube.com/watch?v=...)</span>
+          <span className="text-xs text-gray-400 mb-2">Must be a YouTube link (e.g. https://www.youtube.com/watch?v=&quot;...&quot;)</span>
 
           {error && (
             <div className="text-red-400 text-sm font-medium animate-shake">{error}</div>
