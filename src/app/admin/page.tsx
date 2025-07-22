@@ -2,7 +2,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { db } from '@/lib/firebase';  
-import { collection, query, onSnapshot, updateDoc, doc, orderBy, Timestamp } from 'firebase/firestore';
+import { ref, onValue, update } from 'firebase/database';
 import YouTube from 'react-youtube';
 
 function extractVideoId(url: string) {
@@ -16,7 +16,7 @@ interface KaraokeQueueItem {
   name: string;
   youtubeLink: string;
   status: 'queued' | 'playing' | 'done';
-  createdAt?: Timestamp;
+  createdAt?: number;
 }
 
 export default function AdminPage() {
@@ -24,21 +24,25 @@ export default function AdminPage() {
   const [current, setCurrent] = useState<KaraokeQueueItem | null>(null);
 
   useEffect(() => {
-    const q = query(collection(db, 'karaokeQueue'), orderBy('createdAt'));
-    return onSnapshot(q, snapshot => {
-      const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as KaraokeQueueItem[];
+    const queueRef = ref(db, 'karaokeQueue');
+    const unsubscribe = onValue(queueRef, (snapshot) => {
+      const data = snapshot.val() || {};
+      const items = Object.entries(data)
+        .map(([id, item]) => ({ id, ...(item as Omit<KaraokeQueueItem, 'id'>) }))
+        .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
       setQueue(items);
       const next = items.find((item: KaraokeQueueItem) => item.status === 'queued');
       if (next && (!current || current.id !== next.id)) {
         setCurrent(next);
-        updateDoc(doc(db, 'karaokeQueue', next.id), { status: 'playing' });
+        update(ref(db, `karaokeQueue/${next.id}`), { status: 'playing' });
       }
     });
+    return () => unsubscribe();
   }, []);
 
   const handleNext = async () => {
     if (current) {
-      await updateDoc(doc(db, 'karaokeQueue', current.id), { status: 'done' });
+      await update(ref(db, `karaokeQueue/${current.id}`), { status: 'done' });
       setCurrent(null); // Will auto-switch via snapshot
     }
   };
