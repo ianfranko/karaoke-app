@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { addQueueItem } from '../../lib/firebase';
 import toast from 'react-hot-toast';
 import { FaSpinner } from 'react-icons/fa';
+import Link from 'next/link';
+import confetti from 'canvas-confetti';
 
 // Define a type for YouTube search results
 interface YouTubeSearchResult {
@@ -46,12 +48,33 @@ export default function SubmitPage() {
         youtubeLink: link,
         status: 'waiting',
       });
-      toast.success('🎉 Song submitted!');
+      toast.dismiss(); // Dismiss all previous toasts
+      toast.success('🎤✨ Your song is in the queue! Get ready to shine on stage! 🌟🎶', {
+        icon: '🎉',
+        style: {
+          borderRadius: '10px',
+          background: '#1e293b',
+          color: '#f472b6',
+          fontWeight: 'bold',
+          fontSize: '1.1rem',
+          boxShadow: '0 0 20px #f472b6',
+        },
+      });
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.7 },
+        colors: ['#f472b6', '#facc15', '#a78bfa', '#fff'],
+        shapes: ['circle', 'square'],
+      });
       setQueuedYou(true);
       setLink('');
       setSearchQuery('');
       setSearchResults([]);
       setSuccess(true);
+      setTimeout(() => setQueuedYou(false), 3000);
+      setError(''); // Clear error message below form
+      setSuccess(false); // Remove success message below form
     } catch (err) {
       console.error('Submission error:', err); // Log the actual error
       setError('Failed to submit.');
@@ -83,6 +106,15 @@ export default function SubmitPage() {
 
   return (
     <div className="min-h-screen h-screen w-full p-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-white flex flex-col items-center overflow-y-auto">
+      {/* Navigation Links */}
+      <div className="w-full max-w-md flex justify-between mb-6">
+        <Link href="/maindisplay" className="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded transition shadow">
+          Main Display
+        </Link>
+        <Link href="/queue" className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition shadow">
+          Queue
+        </Link>
+      </div>
       <div className="w-full max-w-md bg-gray-900 rounded-xl shadow-lg p-8 flex flex-col items-center animate-fade-in">
         <h1 className="text-3xl font-extrabold mb-6 text-pink-400 drop-shadow">Submit Your Name and Song</h1>
         {/* YouTube Search Section */}

@@ -25,7 +25,7 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row items-center gap-8 mt-6 w-full justify-center">
           <div className="flex flex-col items-center">
             <span className="text-purple-300 font-semibold mb-2 text-base">Scan to Submit Your Song</span>
-            <div className="bg-white p-5 rounded-2xl shadow-2xl animate-pulse-slow border-4 border-purple-400/30" style={{ boxShadow: '0 0 32px 8px #a78bfa55' }}>
+            <div className="bg-white p-5 rounded-2xl shadow-2xl animate-pulse-slow border-4 border-purple-400/30 hidden-mobile" style={{ boxShadow: '0 0 32px 8px #a78bfa55' }}>
               <QRCode value="/submit" size={400} bgColor="#fff" fgColor="#7c3aed" />
             </div>
           </div>

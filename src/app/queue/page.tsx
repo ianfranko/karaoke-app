@@ -73,6 +73,10 @@ export default function QueuePage() {
     prevQueueLength.current = queue.length;
   }, [queue.length, play]);
 
+  // Limit queue to 25 entries for display and drag-and-drop
+  const MAX_QUEUE_LENGTH = 25;
+  const limitedQueue = queue.slice(0, MAX_QUEUE_LENGTH);
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0f2027] via-[#2c5364] to-[#232526] text-white p-4 sm:p-8 relative overflow-hidden">
       {/* Animated floating music notes */}
@@ -90,61 +94,68 @@ export default function QueuePage() {
           <p className="text-lg text-gray-200">No one in the queue yet! Be the first to sing!</p>
         </div>
       ) : (
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="queue-list">
-            {(provided) => (
-              <ul className="space-y-4 max-w-2xl mx-auto relative z-10" ref={provided.innerRef} {...provided.droppableProps}>
-                {queue.map((item, idx) => (
-                  <Draggable key={item.key} draggableId={item.key} index={idx}>
-                    {(provided, snapshot) => (
-                      <li
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className={
-                          (idx === 0 ? 'relative z-10 ' : '') +
-                          (snapshot.isDragging ? 'scale-105 shadow-2xl ring-2 ring-pink-400 ' : '') +
-                          ' animate-slideIn'
-                        }
-                        style={{ ...provided.draggableProps.style }}
-                      >
-                        {idx === 0 && (
-                          <div className="spotlight-effect" />
-                        )}
-                        <div className={
-                          idx === 0
-                            ? 'ring-4 ring-pink-400/60 rounded-lg animate-pulse shadow-lg bg-black/80'
-                            : 'bg-black/70'
-                        }>
-                          <div className="group relative cursor-grab active:cursor-grabbing">
-                            <QueueItem
-                              name={item.addedBy || item.artist || 'Unknown'}
-                              youtubeLink={item.youtubeLink || ''}
-                              status={item.status || (idx === 0 ? 'singing' : 'waiting')}
-                              songTitle={item.songTitle}
-                              artist={item.artist}
-                            />
-                            <span className="absolute left-1/2 -bottom-7 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-black text-white text-xs px-2 py-1 rounded shadow-lg pointer-events-none">Click to expand for details</span>
-                          </div>
+        <>
+          {queue.length >= MAX_QUEUE_LENGTH && (
+            <div className="max-w-2xl mx-auto mb-4 p-2 bg-pink-900/80 text-pink-200 text-center rounded shadow-lg relative z-10">
+              The queue is full! No more than 25 entries allowed.
+            </div>
+          )}
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="queue-list">
+              {(provided) => (
+                <ul className="space-y-4 max-w-2xl mx-auto relative z-10" ref={provided.innerRef} {...provided.droppableProps}>
+                  {limitedQueue.map((item, idx) => (
+                    <Draggable key={item.key} draggableId={item.key} index={idx}>
+                      {(provided, snapshot) => (
+                        <li
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className={
+                            (idx === 0 ? 'relative z-10 ' : '') +
+                            (snapshot.isDragging ? 'scale-105 shadow-2xl ring-2 ring-pink-400 ' : '') +
+                            ' animate-slideIn'
+                          }
+                          style={{ ...provided.draggableProps.style }}
+                        >
                           {idx === 0 && (
-                            <>
-                              <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-pink-600 text-white text-xs px-3 py-1 rounded-full shadow-lg animate-bounce font-bold">Now Singing!</div>
-                              {/* Animated progress bar */}
-                              <div className="w-full h-2 bg-pink-900 rounded mt-2 overflow-hidden">
-                                <div className="h-full bg-pink-400 animate-progressBar" style={{ width: '100%' }}></div>
-                              </div>
-                            </>
+                            <div className="spotlight-effect" />
                           )}
-                        </div>
-                      </li>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </ul>
-            )}
-          </Droppable>
-        </DragDropContext>
+                          <div className={
+                            idx === 0
+                              ? 'ring-4 ring-pink-400/60 rounded-lg animate-pulse shadow-lg bg-black/80'
+                              : 'bg-black/70'
+                          }>
+                            <div className="group relative cursor-grab active:cursor-grabbing">
+                              <QueueItem
+                                name={item.addedBy || item.artist || 'Unknown'}
+                                youtubeLink={item.youtubeLink || ''}
+                                status={item.status || (idx === 0 ? 'singing' : 'waiting')}
+                                songTitle={item.songTitle}
+                                artist={item.artist}
+                              />
+                              <span className="absolute left-1/2 -bottom-7 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-black text-white text-xs px-2 py-1 rounded shadow-lg pointer-events-none">Click to expand for details</span>
+                            </div>
+                            {idx === 0 && (
+                              <>
+                                <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-pink-600 text-white text-xs px-3 py-1 rounded-full shadow-lg animate-bounce font-bold">Now Singing!</div>
+                                {/* Animated progress bar */}
+                                <div className="w-full h-2 bg-pink-900 rounded mt-2 overflow-hidden">
+                                  <div className="h-full bg-pink-400 animate-progressBar" style={{ width: '100%' }}></div>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </li>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </ul>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </>
       )}
     </main>
   );

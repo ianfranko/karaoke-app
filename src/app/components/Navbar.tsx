@@ -32,7 +32,7 @@ const Navbar = () => {
           background: 'none',
           border: 'none',
           cursor: 'pointer',
-          zIndex: 2,
+          zIndex: 1100,
         }}
         aria-label="Toggle menu"
         className="navbar-hamburger"
@@ -48,11 +48,11 @@ const Navbar = () => {
           gap: '1.5rem',
         }}
       >
-        <Link href="/" style={{ color: '#fff', textDecoration: 'none' }}>Home</Link>
-        <Link href="/submit" style={{ color: '#fff', textDecoration: 'none' }}>Submit Song</Link>
-        <Link href="/queue" style={{ color: '#fff', textDecoration: 'none' }}>Queue</Link>
-        <Link href="/maindisplay" style={{ color: '#fff', textDecoration: 'none' }}>Main Display</Link>
-        <Link href="/qr" style={{ color: '#fff', textDecoration: 'none' }}>QR</Link>
+        <Link href="/" style={{ color: '#fff', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>Home</Link>
+        <Link href="/submit" style={{ color: '#fff', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>Submit Song</Link>
+        <Link href="/queue" style={{ color: '#fff', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>Queue</Link>
+        <Link href="/maindisplay" style={{ color: '#fff', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>Main Display</Link>
+        <Link href="/qr" style={{ color: '#fff', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>QR</Link>
       </div>
       <style jsx>{`
         @media (max-width: 768px) {
@@ -66,11 +66,14 @@ const Navbar = () => {
             gap: 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             display: ${menuOpen ? 'flex' : 'none'};
-            z-index: 1;
+            z-index: 1000;
+            align-items: center;
           }
           .navbar-links a {
             padding: 1rem 2rem 1rem 2.5rem;
             border-bottom: 1px solid #333;
+            text-align: center;
+            width: 100%;
           }
           .navbar-hamburger {
             display: flex !important;
