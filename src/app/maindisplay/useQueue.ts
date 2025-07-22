@@ -19,7 +19,7 @@ export function useQueue() {
     const unsubscribe = onValue(queueRef, (snapshot) => {
       const data = snapshot.val() || {};
       const queueArr = Object.entries(data)
-        .map(([key, item]: [string, any]) => ({ key, ...(item as Omit<QueueItem, 'key'>) }))
+        .map(([key, item]: [string, unknown]) => ({ key, ...(item as Omit<QueueItem, 'key'>) }))
         .sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
       setQueue(queueArr);
     });
