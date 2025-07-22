@@ -16,8 +16,9 @@ export default function HomePage() {
       <div className="z-10 w-full max-w-2xl flex flex-col items-center">
         <h1 className="text-5xl sm:text-6xl font-extrabold mb-2 tracking-tight drop-shadow-lg font-sans">
           <span className="bg-gradient-to-r from-pink-500 via-yellow-400 to-purple-500 bg-clip-text text-transparent flex items-center justify-center gap-2">
+           <FaMusic className="inline-block text-pink-400 drop-shadow-md" size={48} /> 
+            Jam with AiiSi
             <FaMusic className="inline-block text-pink-400 drop-shadow-md" size={48} />
-            Karaoke Jam
           </span>
         </h1>
         <p className="text-lg sm:text-xl mb-4 opacity-90 font-medium">Unleash your inner superstar! Join the fun, submit your song, and sing your heart out.</p>
@@ -25,10 +26,18 @@ export default function HomePage() {
           <div className="flex flex-col items-center">
             <span className="text-purple-300 font-semibold mb-2 text-base">Scan to Submit Your Song</span>
             <div className="bg-white p-5 rounded-2xl shadow-2xl animate-pulse-slow border-4 border-purple-400/30" style={{ boxShadow: '0 0 32px 8px #a78bfa55' }}>
-              <QRCode value="/submit" size={160} bgColor="#fff" fgColor="#7c3aed" />
+              <QRCode value="/submit" size={400} bgColor="#fff" fgColor="#7c3aed" />
             </div>
           </div>
           <div className="flex flex-col items-center gap-4 mt-8 sm:mt-0">
+            <Link href="/maindisplay" className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold text-lg shadow-lg transition-all duration-200">
+              <FaMusic className="text-purple-700" />
+              Main Display
+            </Link>
+            <Link href="/submit" className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-pink-500 hover:bg-pink-600 text-white font-semibold text-lg shadow-lg transition-all duration-200">
+              <FaArrowRight className="text-yellow-300" />
+              Submit a Song
+            </Link>
             <Link href="/queue" className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-purple-600 hover:bg-purple-700 text-white font-semibold text-lg shadow-lg transition-all duration-200">
               <FaArrowRight className="text-yellow-300" />
               View Live Queue
@@ -42,7 +51,7 @@ export default function HomePage() {
       </div>
       <footer className="z-10 mt-16 text-sm text-gray-400 opacity-80 w-full text-center">
         <div>Karaoke Jam &copy; {new Date().getFullYear()} &mdash; Powered by Navigating Kenya</div>
-        <div className="mt-1">Event by <span className="text-pink-300 font-semibold">CHEMICHEMI</span></div>
+        <div className="mt-1">Event by <span className="text-pink-300 font-semibold">CHEMICHEMI AND NICOLE AIISI</span></div>
       </footer>
       <style jsx global>{`
         @keyframes pulse-slow {

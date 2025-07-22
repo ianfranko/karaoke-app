@@ -29,13 +29,13 @@ const NowPlayingCard: React.FC<NowPlayingCardProps> = ({ nowPlaying, isAdmin, on
   return (
     <div className="w-full bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-8 flex flex-col items-center border border-white/20">
       <div className="mb-4">
-        <span className="px-6 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white text-lg font-bold rounded-full shadow-lg border-4 border-white/30 backdrop-blur-md">
+        <span className="px-6 py-2 text-lg font-bold rounded-full shadow border backdrop-blur-md">
           Now Playing
         </span>
       </div>
       {nowPlaying ? (
         <>
-          <div className="w-full max-w-2xl aspect-video rounded-xl overflow-hidden shadow-lg border-4 border-purple-400/40 mb-4 bg-black flex items-center justify-center">
+          <div className="w-full max-w-2xl aspect-video rounded-xl overflow-hidden shadow border mb-4 bg-black flex items-center justify-center">
             {embedUrl ? (
               <iframe
                 src={embedUrl}
@@ -47,29 +47,29 @@ const NowPlayingCard: React.FC<NowPlayingCardProps> = ({ nowPlaying, isAdmin, on
                 title="YouTube video player"
               />
             ) : (
-              <div className="flex flex-col items-center justify-center w-full h-full text-white">
+              <div className="flex flex-col items-center justify-center w-full h-full">
                 <span className="text-4xl mb-2">⏳</span>
                 <p className="text-lg">Video unavailable</p>
               </div>
             )}
           </div>
-          <div className="text-3xl font-bold text-white mb-1 drop-shadow-lg flex items-center gap-2">
-            <span className="bg-gradient-to-r from-pink-400 to-purple-400 text-transparent bg-clip-text">
-              {nowPlaying.name}
+          <div className="text-3xl font-extrabold mb-1 flex items-center gap-2">
+            <span className="relative px-6 py-2 rounded-full shadow border backdrop-blur-md">
+              <span className="relative">{nowPlaying.name}</span>
             </span>
           </div>
           <a
             href={nowPlaying.youtubeLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-blue-200 hover:underline truncate max-w-xs mb-2"
+            className="text-sm hover:underline truncate max-w-xs mb-2"
             title={nowPlaying.youtubeLink}
           >
             {nowPlaying.youtubeLink}
           </a>
           <button
             onClick={onNext}
-            className="mt-4 px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold rounded-full shadow-lg hover:from-blue-600 hover:to-purple-600 transition border-2 border-white/20 flex items-center gap-2"
+            className="mt-4 px-6 py-2 font-bold rounded-full shadow hover:bg-gray-200 transition border flex items-center gap-2"
             aria-label="Next Song"
           >
             <span>Next</span> <span aria-hidden>▶️</span>
@@ -78,7 +78,7 @@ const NowPlayingCard: React.FC<NowPlayingCardProps> = ({ nowPlaying, isAdmin, on
       ) : (
         <div className="flex flex-col items-center justify-center h-64">
           <span className="text-6xl mb-4 animate-spin">⏳</span>
-          <p className="text-xl text-gray-200">Waiting for the next song...</p>
+          <p className="text-xl">Waiting for the next song...</p>
         </div>
       )}
     </div>

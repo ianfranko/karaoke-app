@@ -45,7 +45,6 @@ const Navbar = () => {
       <div
         className="navbar-links"
         style={{
-          display: 'flex',
           gap: '1.5rem',
         }}
       >
@@ -70,11 +69,16 @@ const Navbar = () => {
             z-index: 1;
           }
           .navbar-links a {
-            padding: 1rem 2rem;
+            padding: 1rem 2rem 1rem 2.5rem;
             border-bottom: 1px solid #333;
           }
           .navbar-hamburger {
             display: flex !important;
+          }
+        }
+        @media (min-width: 769px) {
+          .navbar-links {
+            display: flex;
           }
         }
       `}</style>

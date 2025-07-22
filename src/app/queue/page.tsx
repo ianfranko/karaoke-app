@@ -81,6 +81,7 @@ export default function QueuePage() {
         <span className="absolute right-20 top-1/3 text-3xl opacity-20 animate-float text-white">🎶</span>
         <span className="absolute left-1/2 bottom-20 text-5xl opacity-20 animate-float-fast text-pink-300">🎤</span>
         <span className="absolute right-10 bottom-10 text-4xl opacity-30 animate-float text-white">🎼</span>
+        
       </div>
       <h1 className="text-3xl sm:text-4xl font-extrabold mb-8 text-center tracking-tight drop-shadow-lg relative z-10 text-white">🎤 Live Karaoke Queue</h1>
       {queue.length === 0 ? (

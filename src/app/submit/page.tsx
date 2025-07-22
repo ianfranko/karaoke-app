@@ -49,6 +49,8 @@ export default function SubmitPage() {
       toast.success('🎉 Song submitted!');
       setQueuedYou(true);
       setLink('');
+      setSearchQuery('');
+      setSearchResults([]);
       setSuccess(true);
     } catch (err) {
       console.error('Submission error:', err); // Log the actual error
@@ -80,12 +82,12 @@ export default function SubmitPage() {
   };
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-white flex flex-col items-center">
+    <div className="min-h-screen h-screen w-full p-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-white flex flex-col items-center overflow-y-auto">
       <div className="w-full max-w-md bg-gray-900 rounded-xl shadow-lg p-8 flex flex-col items-center animate-fade-in">
-        <h1 className="text-3xl font-extrabold mb-6 text-pink-400 drop-shadow">Submit Your Karaoke Song</h1>
+        <h1 className="text-3xl font-extrabold mb-6 text-pink-400 drop-shadow">Submit Your Name and Song</h1>
         {/* YouTube Search Section */}
         <div className="w-full flex flex-col gap-2 mb-6">
-          <label className="text-left w-full font-semibold" htmlFor="yt-search">Search YouTube Karaoke</label>
+          <label className="text-left w-full font-semibold" htmlFor="yt-search">YouTube Search (and add "Kraraoke" at the end of the search)</label>
           <div className="flex gap-2">
             <input
               id="yt-search"
@@ -108,12 +110,15 @@ export default function SubmitPage() {
           {searchError && <div className="text-red-400 text-sm font-medium animate-shake">{searchError}</div>}
           {/* Results */}
           {searchResults.length > 0 && (
-            <div className="mt-2 grid grid-cols-1 gap-3">
+            <div className="mt-2 grid grid-cols-1 gap-3 overflow-y-auto max-h-52">
               {searchResults.map((item) => (
                 <div
                   key={item.id.videoId}
                   className="flex items-center gap-3 bg-gray-800 rounded p-2 cursor-pointer hover:bg-pink-900 transition"
-                  onClick={() => setLink(`https://www.youtube.com/watch?v=${item.id.videoId}`)}
+                  onClick={() => {
+                    setLink(`https://www.youtube.com/watch?v=${item.id.videoId}`);
+                    toast.success(`Song link for \"${item.snippet.title}\" auto-filled!`);
+                  }}
                 >
                   <img
                     src={item.snippet.thumbnails.default.url}
