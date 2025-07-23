@@ -3,8 +3,17 @@
 import QRCode from 'react-qr-code';
 import Link from 'next/link';
 import { FaMusic, FaUserShield, FaArrowRight } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
 
 export default function HomePage() {
+  const [qrValue, setQrValue] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setQrValue(window.location.origin + '/submit');
+    }
+  }, []);
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center text-center p-6 sm:p-10 bg-gray-900 text-white relative overflow-hidden font-sans">
       {/* Floating Music Notes Animation */}
@@ -26,7 +35,7 @@ export default function HomePage() {
           <div className="flex flex-col items-center">
             <span className="text-purple-300 font-semibold mb-2 text-base">Scan to Submit Your Song</span>
             <div className="bg-white p-5 rounded-2xl shadow-2xl animate-pulse-slow border-4 border-purple-400/30 hidden-mobile" style={{ boxShadow: '0 0 32px 8px #a78bfa55' }}>
-              <QRCode value="/submit" size={400} bgColor="#fff" fgColor="#7c3aed" />
+              <QRCode value={qrValue || 'https://karaoke-app.netlify.app/submit'} size={400} bgColor="#fff" fgColor="#7c3aed" />
             </div>
           </div>
           <div className="flex flex-col items-center gap-4 mt-8 sm:mt-0">

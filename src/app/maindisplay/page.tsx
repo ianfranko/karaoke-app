@@ -11,6 +11,10 @@ export default function MainDisplayPage() {
 
   return (
     <main className="min-h-screen w-full bg-gradient-to-br from-indigo-900 via-purple-900 to-gray-900 flex flex-col items-center justify-between p-0 relative overflow-hidden">
+      {/* Display banner at the very top */}
+      <div className="w-full bg-yellow-300 text-black text-center py-2 font-semibold text-sm sm:text-base z-20">
+        To Submit Song go to :karaokejam.netlify.app
+      </div>
       <div className="absolute inset-0 -z-10">
         <div className="hidden sm:block absolute top-0 left-0 w-96 h-96 bg-purple-700 opacity-30 rounded-full blur-3xl animate-pulse" />
         <div className="hidden sm:block absolute bottom-0 right-0 w-96 h-96 bg-blue-700 opacity-20 rounded-full blur-3xl animate-pulse" />
