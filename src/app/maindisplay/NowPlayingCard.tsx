@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface QueueItem {
   key: string;
@@ -52,6 +52,13 @@ const NowPlayingCard: React.FC<NowPlayingCardProps> = ({ nowPlaying, onNext }) =
               </div>
             )}
           </div>
+          <a
+            href={nowPlaying.youtubeLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-full font-semibold shadow hover:bg-blue-700 transition mb-4">Open on YouTube</button>
+          </a>
           <div className="text-3xl font-extrabold mb-1 flex items-center gap-2">
             <span className="relative px-6 py-2 rounded-full shadow border backdrop-blur-md">
               <span className="relative">{nowPlaying.name}</span>

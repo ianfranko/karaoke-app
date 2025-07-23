@@ -10,9 +10,9 @@ export default function MainDisplayPage() {
   const upNext = queue.slice(1);
 
   return (
-    <main className="min-h-screen w-full bg-gradient-to-br from-indigo-900 via-purple-900 to-gray-900 flex flex-col items-center justify-between p-0 relative overflow-hidden">
+    <main className="min-h-screen w-full bg-gradient-to-br from-indigo-900 via-purple-900 to-gray-900 flex flex-col items-center justify-center p-0 relative overflow-hidden">
       {/* Display banner at the very top */}
-      <div className="w-full bg-yellow-300 text-black text-center py-2 font-semibold text-sm sm:text-base z-20">
+      <div className="w-full bg-yellow-300 text-black text-center py-2 font-semibold text-sm sm:text-base z-20 flex-shrink-0">
         To Submit Song go to :karaokejam.netlify.app
       </div>
       <div className="absolute inset-0 -z-10">
@@ -28,7 +28,7 @@ export default function MainDisplayPage() {
         </h1>
         <p className="text-sm sm:text-base text-purple-200 mt-1 font-medium tracking-wide">Sing your heart out!</p>
       </header>
-      <div className="flex-1 w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-6 items-stretch min-h-0 px-1 sm:px-2 md:px-0">
+      <div className="flex-1 w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-6 items-stretch min-h-0 px-1 sm:px-2 md:px-0 overflow-auto">
         <section className="flex flex-col items-center w-full md:col-span-2 min-h-0">
           <div className="flex-1 w-full min-h-0 overflow-auto flex flex-col items-center justify-center p-1 sm:p-0">
             <NowPlayingCard nowPlaying={nowPlaying} onNext={removeFirst} />
